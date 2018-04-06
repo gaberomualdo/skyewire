@@ -117,11 +117,16 @@ input {
     padding-top: 20px;
     text-align: left;
 }
+#recieve p strong {
+    text-align: center;
+    width: 100%;
+    display: block;
+    color: #f00;
+}
 #send p {
     text-align: center;
     font-size: 25px;
     font-weight: bold;
-    line-height: 1.5;
 }
 #send p span {
     font-weight: normal;
@@ -134,15 +139,58 @@ input {
         <span class="title"><h2>Skyewire</h2><p>Share text instantly</p></span>        
         <h1>Recieve Data</h1>
         <div id="recieve">
-            <input type="text" placeholder="Enter Pin..." id="recieveDataPin"><button id="recieveDataBtn">Get Data</button>
+            <input type="text" spellcheck="false" placeholder="Enter Pin..." id="recieveDataPin"><button id="recieveDataBtn">Get Data</button>
             <p id="recievedData"></p>
         </div>
         <h1>Send Data</h1>
         <div id="send">
-            <textarea id="sendDataTextbox" placeholder="Send Data..."></textarea>
+            <textarea id="sendDataTextbox" spellcheck="false" placeholder="Send Data..."></textarea>
             <button id="sendDataBtn">Send Data</button>
             <p id='sendDataPin'></p>
         </div>
     </div>
 </body>
+
+<script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
+<script>
+// Initialize Firebase
+var config = {
+	apiKey: "AIzaSyARa4FcVR6dqiTTrX3u4Oaf4tknknh30X4",
+	authDomain: "textdump-cf861.firebaseapp.com",
+	databaseURL: "https://textdump-cf861.firebaseio.com",
+	projectId: "textdump-cf861",
+	storageBucket: "",
+	messagingSenderId: "43365753401"
+};
+firebase.initializeApp(config);
+var database = firebase.database();
+var allData = {};
+database.ref().on('value', function(snapshot) {
+	allData = snapshot.val();
+});
+
+document.getElementById("sendDataBtn").onclick = function(){
+	var text = document.getElementById("sendDataTextbox").value;
+	var code;
+	var status = true;
+	while(status){
+		code = Math.floor(Math.random()*1000000);
+		if(!allData || !allData.hasOwnProperty(code)){
+			status = false;
+		}
+	}
+	var dataObject = {text: text};
+	firebase.database().ref(code).set(dataObject);
+	document.getElementById("sendDataPin").innerText = (code);
+}
+document.getElementById("recieveDataBtn").onclick = function(){
+	var code = document.getElementById("recieveDataPin").value;
+	if(allData.hasOwnProperty(code)){
+        document.getElementById("recievedData").innerText = allData[code].text;
+    }else{
+        document.getElementById("recievedData").innerHTML = "<strong>Invalid Pin</strong>";
+    }
+}
+</script>
+
 </html>
