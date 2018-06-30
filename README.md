@@ -1,6 +1,6 @@
 # skyewire
 ## Share text instantly with one pin.
-### See at https://driftsoft.github.io/skyewire
+### See at https://xtrp.github.io/skyewire
 
 Skyewire is simply a re-design of Textdump, and works with the same database.
 
